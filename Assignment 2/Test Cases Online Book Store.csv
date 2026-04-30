@@ -1,0 +1,47 @@
+testRun__id,testRun__name,testRun__status,testRun__executionDate,executions__id,executions__testCaseId,executions__testCaseNumber,executions__testCaseName,executions__status,executions__duration,executions__notes,executions__logOutput,summary__total,summary__passed,summary__failed,summary__skipped,summary__duration
+406,Online Book Store Test Run,completed,2026-04-30T14:30:04.112Z,exec-0,3242,18,Verify empty search submission behavior,failed,0,"Bug: Empty search submission does not show validation message. 
+Expected: ""Please enter search term"" error message.
+Actual: Page refreshes with no results and no feedback to user.",,39,36,3,0,0
+,,,,exec-1,3227,3,Verify registration fails with invalid email format,passed,0,,,,,,,
+,,,,exec-2,3232,8,Verify login fails with incorrect password,passed,0,,,,,,,
+,,,,exec-3,3237,13,Verify search by valid 13-digit ISBN,passed,0,,,,,,,
+,,,,exec-4,3264,28,Verify cart persists after user login,passed,0,,,,,,,
+,,,,exec-5,3247,23,Verify add multiple copies of same book,passed,0,,,,,,,
+,,,,exec-6,3274,38,Verify order details include complete information,passed,0,,,,,,,
+,,,,exec-7,3269,33,Verify checkout fails with invalid payment details,passed,0,,,,,,,
+,,,,exec-8,3270,34,Verify checkout fails with insufficient funds,failed,0,"Bug: Generic ""Transaction failed"" error message shown instead of 
+specific ""Insufficient funds in your account"" message.
+Expected: Clear error message indicating insufficient funds.
+Actual: User cannot determine why payment was declined.",,,,,,
+,,,,exec-9,3265,29,Verify Add to Cart button disabled for out of stock books,failed,0,"Bug: Add to Cart button is not disabled for out-of-stock books.
+Expected: Button greyed out or hidden.
+Actual: Button clickable, then shows ""Item unavailable"" error after clicking.",,,,,,
+,,,,exec-10,3228,4,Verify registration fails when passwords do not match,passed,0,,,,,,,
+,,,,exec-11,3233,9,Verify login fails with non-existent email address,passed,0,,,,,,,
+,,,,exec-12,3238,14,Verify search by complete book title,passed,0,,,,,,,
+,,,,exec-13,3243,19,Verify filter by category or genre,passed,0,,,,,,,
+,,,,exec-14,3248,24,Verify add multiple copies of same book,passed,0,,,,,,,
+,,,,exec-15,3275,39,Verify track current order status,passed,0,,,,,,,
+,,,,exec-16,3229,5,Verify weak password validation prevents registration,passed,0,,,,,,,
+,,,,exec-17,3234,10,Verify login fails with empty email and password fields,passed,0,,,,,,,
+,,,,exec-18,3239,15,Verify search by partial book title,passed,0,,,,,,,
+,,,,exec-19,3244,20,Verify filter by price range,passed,0,,,,,,,
+,,,,exec-20,3249,25,Verify remove book from cart,passed,0,,,,,,,
+,,,,exec-21,3271,35,Verify order confirmation displayed after successful checkout,passed,0,,,,,,,
+,,,,exec-22,3266,30,Verify maximum quantity limit,passed,0,,,,,,,
+,,,,exec-23,3230,6,Verify registration page loads within 2 seconds,passed,0,,,,,,,
+,,,,exec-24,3235,11,Verify password recovery mechanism works,passed,0,,,,,,,
+,,,,exec-25,3240,16,Verify search by author name,passed,0,,,,,,,
+,,,,exec-26,3245,21,Verify filter by rating,passed,0,,,,,,,
+,,,,exec-27,3250,26,Verify modify quantity of book in cart,passed,0,,,,,,,
+,,,,exec-28,3272,36,Verify shipping address validation,passed,0,,,,,,,
+,,,,exec-29,3267,31,Verify successful checkout with valid payment details,passed,0,,,,,,,
+,,,,exec-30,3225,1,Verify successful registration with valid information,passed,0,,,,,,,
+,,,,exec-31,3226,2,Verify registration fails with missing required fields,passed,0,,,,,,,
+,,,,exec-32,3231,7,Verify successful login with valid credentials,passed,0,,,,,,,
+,,,,exec-33,3236,12,Verify login process completes within 2 seconds,passed,0,,,,,,,
+,,,,exec-34,3241,17,Verify search with no matching results,passed,0,,,,,,,
+,,,,exec-35,3246,22,Verify add single book to cart from product page,passed,0,,,,,,,
+,,,,exec-36,3263,27,Verify unauthenticated user can add items to cart,passed,0,,,,,,,
+,,,,exec-37,3273,37,Verify authenticated user can view order history,passed,0,,,,,,,
+,,,,exec-38,3268,32,Verify checkout fails when cart is empty,passed,0,,,,,,,
