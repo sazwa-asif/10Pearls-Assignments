@@ -1,0 +1,461 @@
+{
+  "info": {
+    "_postman_id": "0632a4f0-8563-4fa8-bb63-66b5d6c0bf64",
+    "name": "Assignment 4 Postman API Testing",
+    "description": "Assignment No. 4 API Testing with Postman using RESTful API. Covers GET, POST, PUT, PATCH, DELETE, variable handling, random data generation, JSON parsing, Chai assertions, API chaining, and pre-request/test scripting.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53973218"
+  },
+  "item": [
+    {
+      "name": "Get All Objects",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "console.log('Sending GET request to fetch all objects...');"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const objects = pm.response.json();",
+              "console.log(`Total objects in the DB: ${objects.length}`);",
+              "",
+              "if (objects.length > 0) {",
+              "    console.log('First object in list:', objects[0].name);",
+              "    pm.test('First object has id and name', () => {",
+              "        pm.expect(objects[0]).to.have.property('id');",
+              "        pm.expect(objects[0]).to.have.property('name');",
+              "    });",
+              "} else {",
+              "    console.warn('No objects found – run Create Object first');",
+              "}",
+              "",
+              "pm.test('Status code is 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is an array', () => {",
+              "    pm.expect(objects).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get a Single Object",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "console.log('Fetching single object with ID:', pm.collectionVariables.get('objectId'));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const obj = pm.response.json();",
+              "const expectedId = pm.collectionVariables.get('objectId');",
+              "",
+              "console.log('Retrieved Single Object');",
+              "console.log(`ID: ${obj.id}, Name: ${obj.name}`);",
+              "console.log('Data:', obj.data);",
+              "",
+              "pm.test('Status code is 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Retrieved ID matches chained objectId', () => {",
+              "    pm.expect(obj.id).to.equal(expectedId);",
+              "});",
+              "",
+              "pm.test('Object has name and data properties', () => {",
+              "    pm.expect(obj).to.have.property('name');",
+              "    pm.expect(obj).to.have.property('data');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{objectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{objectId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Object",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const randomSuffix = Math.floor(Math.random() * 10000);",
+              "const randomName = `Test Object ${randomSuffix}`;",
+              "const randomPrice = parseFloat((Math.random() * 2000 + 100).toFixed(2));",
+              "const randomYear = Math.floor(Math.random() * 5) + 2020;",
+              "",
+              "pm.collectionVariables.set('randomName', randomName);",
+              "pm.collectionVariables.set('randomPrice', randomPrice);",
+              "pm.collectionVariables.set('randomYear', randomYear);",
+              "",
+              "console.log(`${randomName}, ${randomPrice}, ${randomYear}`);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();",
+              "console.log('Created Object');",
+              "console.log(response);",
+              "",
+              "pm.test('Status code is 200 or 201', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response contains id and name', () => {",
+              "    pm.expect(response).to.have.property('id');",
+              "    pm.expect(response).to.have.property('name');",
+              "});",
+              "",
+              "pm.test('Generated name matches request', () => {",
+              "    const expectedName = pm.collectionVariables.get('randomName');",
+              "    pm.expect(response.name).to.equal(expectedName);",
+              "});",
+              "",
+              "pm.test('Data.price matches generated value', () => {",
+              "    const expectedPrice = pm.collectionVariables.get('randomPrice');",
+              "    pm.expect(response.data.price).to.equal(expectedPrice);",
+              "});",
+              "",
+              "pm.collectionVariables.set('objectId', response.id);",
+              "console.log(`Saved objectId = ${response.id}`);",
+              "",
+              "pm.test('Failing test example – 1 should equal 2', () => {",
+              "    pm.expect(1).to.equal(2);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{randomName}}\",\n  \"data\": {\n    \"price\": {{randomPrice}},\n    \"year\": {{randomYear}},\n    \"category\": \"electronics\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/objects",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Object",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const updatedName = `Updated Product ${Math.floor(Math.random() * 10000)}`;",
+              "const updatedPrice = parseFloat((Math.random() * 2500 + 150).toFixed(2));",
+              "pm.collectionVariables.set('updatedName', updatedName);",
+              "pm.collectionVariables.set('updatedPrice', updatedPrice);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const updated = pm.response.json();",
+              "const expectedId = pm.collectionVariables.get('objectId');",
+              "",
+              "console.log('PUT Update Response');",
+              "console.log(updated);",
+              "",
+              "pm.test('PUT returns status 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('ID remains unchanged', () => {",
+              "    pm.expect(updated.id).to.equal(expectedId);",
+              "});",
+              "",
+              "pm.test('Name was updated to the random value', () => {",
+              "    const newName = pm.collectionVariables.get('updatedName');",
+              "    pm.expect(updated.name).to.equal(newName);",
+              "});",
+              "",
+              "pm.test('Data.price was updated', () => {",
+              "    const newPrice = parseFloat(pm.collectionVariables.get('updatedPrice'));",
+              "    pm.expect(Number(updated.data.price)).to.equal(newPrice);",
+              "});",
+              "",
+              "pm.test('New fields exist after PUT', () => {",
+              "    pm.expect(updated.data).to.have.property('color', 'silver');",
+              "    pm.expect(updated.data).to.have.property('inStock', true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{updatedName}}\",\n  \"data\": {\n    \"year\": \"2019\",\n    \"price\": \"{{updatedPrice}}\",\n    \"color\": \"silver\",\n    \"inStock\": true\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{objectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{objectId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Partially Update Object",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const patchedName = `Patched Product ${Math.floor(Math.random() * 10000)}`;",
+              "pm.collectionVariables.set('patchedName', patchedName);",
+              "console.log(`new name = ${patchedName}`);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const patched = pm.response.json();",
+              "const expectedId = pm.collectionVariables.get('objectId');",
+              "",
+              "console.log('PATCH Partial Update Response');",
+              "console.log(patched);",
+              "",
+              "pm.test('PATCH returns status 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('ID did not change', () => {",
+              "    pm.expect(patched.id).to.equal(expectedId);",
+              "});",
+              "",
+              "pm.test('Name was partially updated', () => {",
+              "    pm.expect(patched.name).to.include('Patched');",
+              "});",
+              "",
+              "pm.test('Data.price changed to 999.9', () => {",
+              "    pm.expect(patched.data.price).to.equal(999.9);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Partially updated {{patchedName}}\",\n  \"data\": {\n    \"price\": 999.9\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{objectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{objectId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Object",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "console.log('Deleting object with ID:', pm.collectionVariables.get('objectId'));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const delResponse = pm.response.json();",
+              "const deletedId = pm.collectionVariables.get('objectId');",
+              "",
+              "console.log('DELETE Response');",
+              "console.log(delResponse);",
+              "",
+              "pm.test('DELETE returns status 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Confirmation message received', () => {",
+              "    pm.expect(delResponse.message).to.include('deleted');",
+              "});",
+              "",
+              "pm.sendRequest({",
+              "    url: `${pm.collectionVariables.get('baseUrl')}/objects/${deletedId}`,",
+              "    method: 'GET'",
+              "}, (err, res) => {",
+              "    pm.test('Object no longer exists – returns 404', () => {",
+              "        pm.expect(res.code).to.equal(404);",
+              "    });",
+              "    console.log(`Verification GET status: ${res.code}`);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/objects/{{objectId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "objects",
+            "{{objectId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.restful-api.dev"
+    },
+    {
+      "key": "objectId",
+      "value": ""
+    },
+    {
+      "key": "randomName",
+      "value": ""
+    },
+    {
+      "key": "randomPrice",
+      "value": ""
+    },
+    {
+      "key": "randomYear",
+      "value": ""
+    },
+    {
+      "key": "updatedName",
+      "value": ""
+    },
+    {
+      "key": "updatedPrice",
+      "value": ""
+    },
+    {
+      "key": "patchedName",
+      "value": ""
+    }
+  ]
+}
